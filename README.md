@@ -1,5 +1,8 @@
 # pokemon-birthday
 
+> `pokemon-birthday` is a fun element which finds out which Pokémon you are based
+on you birthday.
+
 ## Install
 
 Install the component using [Bower](http://bower.io/):
@@ -26,3 +29,7 @@ And then just use it:
 ```html
 <pokemon-birthday locale="en"></pokemon-birthday>
 ```
+
+## Resources
+
+This element uses [Pokéapi](http://pokeapi.co/) and [Pokémon Database](http://pokemondb.net/) as resources.
