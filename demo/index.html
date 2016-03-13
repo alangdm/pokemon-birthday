@@ -10,9 +10,46 @@
   </head>
   <body>
 
-    <pokemon-birthday></pokemon-birthday>
+    <style is="custom-style">
+      .container {
+        display: flex;
+        justify-content: space-around;
+        flex-flow: row wrap;
+      }
 
+      #extra {
+        --pokemon-max-height: 200px;
+        --paper-card-background-color: #B2DFDB;
+        --paper-card: {
+          color: #00796B;
+        }
+        --paper-card-actions: {
+          border-top-color: #009688;
+        }
+      }
+    </style>
+
+    <div class="container">
+      <pokemon-birthday></pokemon-birthday>
+      <pokemon-birthday locale="es"></pokemon-birthday>
+      <pokemon-birthday id="extra"></pokemon-birthday>
+    </div>
     <script>
+    window.addEventListener('WebComponentsReady', function() {
+      //Adding another locale, you must add every resource for the element to work properly
+      extra.push('localeList', 'ja');
+      extra.localeStrings.ja = {
+        heading: '君はどのポケモン？',
+        birthdayLabel: '君の誕生日',
+        result: '君は',
+        tweet1: '私は「',
+        tweet2: '」でした。 君はどのポケモンかを確かめてみて！',
+        languageLabel: '言語',
+        language: '日本語',
+        datePlaceholder: '例：2000-01-31'
+      };
+      extra.locale = 'ja';
+    });
     </script>
 
   </body>
