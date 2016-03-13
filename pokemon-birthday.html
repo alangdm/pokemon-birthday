@@ -1,0 +1,194 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link href="../iron-ajax/iron-ajax.html" rel="import">
+<link href="../paper-card/paper-card.html" rel="import">
+
+<dom-module id="pokemon-birthday">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      img.pokemon {
+        max-width: 100%;
+        max-height: 300px;
+      }
+      img.social {
+        width: 35px;
+      }
+      .card-content {
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
+      }
+      .card-actions {
+        display: flex;
+        justify-content: space-between;
+      }
+      .actionGroup {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        align-content: center;
+      }
+      #pokemonName {
+        text-transform: capitalize;
+      }
+    </style>
+
+    <paper-card heading="[[_getLocalizedString(locale, 'heading', localeStrings)]]">
+      <div class="card-content">
+        <div>
+          <label>[[_getLocalizedString(locale, 'label', localeStrings)]]:</label>
+          <input id="birthday" type="date" value="{{birthday::change}}"
+            placeholder$="[[_getLocalizedString(locale, 'datePlaceholder', localeStrings)]]">
+        </div>
+
+        <h3 hidden$="[[!_resultExists]]">
+          [[_getLocalizedString(locale, 'result', localeStrings)]] #[[number]]
+          <span id="pokemonName">[[pokemon.name]]</span>
+        </h3>
+
+        <img class="pokemon" src="[[_imageURL(pokemon)]]">
+      </div>
+
+      <div class="card-actions">
+        <div class="actionGroup">
+          <label>[[_getLocalizedString(locale, 'languageLabel', localeStrings)]]:</label>
+          <select value="{{locale::change}}">
+            <template is="dom-repeat" items="[[localeList]]">
+              <option value="[[item]]">[[_getLocalizedString(item, 'language', localeStrings)]]</option>
+            </template>
+          </select>
+        </div>
+
+        <div class="actionGroup" hidden$="[[!_resultExists]]">
+          <a href="[[_shareURL('facebook', pokemon)]]" target="_blank">
+            <img class="social" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
+          </a>
+
+          <a href="[[_shareURL('twitter', pokemon)]]" target="_blank">
+            <img class="social" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
+          </a>
+
+          <a href="[[_shareURL('google', pokemon)]]" target="_blank">
+            <img class="social" src="https://simplesharebuttons.com/images/somacro/google.png" alt="Google" />
+          </a>
+
+          <a href="[[_shareURL('tumblr', pokemon)]]" target="_blank">
+            <img class="social" src="https://simplesharebuttons.com/images/somacro/tumblr.png" alt="Tumblr" />
+          </a>
+        </div>
+      </div>
+    </paper-card>
+
+    <iron-ajax
+      auto
+      url="[[_pokeapiURL(number)]]"
+      handle-as="json"
+      last-response="{{pokemon}}"></iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is: 'pokemon-birthday',
+      properties: {
+        birthday: {
+          type: String
+        },
+        pokemon: {
+          type: Object
+        },
+        number: {
+          type: Number,
+          computed: '_calculateNumber(birthday)'
+        },
+        locale: {
+          type: String,
+          value: 'en'
+        },
+        _resultExists: {
+          type: Boolean,
+          value: false
+        },
+        localeStrings: {
+          type: Object,
+          value: function () {
+            return {
+              es: {
+                heading: '¿Qué Pokémon Eres?',
+                label: 'Tu Cumpleaños',
+                result: 'Eres',
+                tweet1: 'Yo soy ',
+                tweet2: '. ¡Descubre qué Pokémon eres tu! ',
+                languageLabel: 'Idioma',
+                language: 'Español',
+                datePlaceholder: 'ejemplo: 2000-01-31'
+              },
+              en: {
+                heading: 'Which Pokémon Are You?',
+                label: 'Your Birthday',
+                result: 'You\'re',
+                tweet1: 'I was ',
+                tweet2: '. Find out which Pokémon you are! ',
+                languageLabel: 'Language',
+                language: 'English',
+                datePlaceholder: 'example: 2000-01-31'
+              }
+            };
+          }
+        },
+        localeList: {
+          type: Array,
+          value: function () {
+            return ['en', 'es'];
+          }
+        }
+      },
+      _getLocalizedString: function (locale, key, strings) {
+        return strings[locale][key];
+      },
+      _calculateNumber: function (birthday) {
+        var date = new Date(birthday);
+        var year = date.getUTCFullYear();
+        var baseYear = year % 2 == 0 ? year - 2 : year - 1;
+        var baseDate = new Date(baseYear + '-12-31');
+        var yearDigits = (year).toString().split("").map(function(t){return parseInt(t)});
+        var seed = (yearDigits[3] * 100) + (yearDigits[2]);
+        return ((((date - baseDate) / 86400000) + seed) % 721) + 1;
+      },
+      _pokeapiURL: function (number) {
+        return 'https://pokeapi.co/api/v2/pokemon/' + number;
+      },
+      _imageURL: function (pokemon) {
+        this._resultExists = true;
+        return 'http://img.pokemondb.net/artwork/' + pokemon.name + '.jpg';
+      },
+      _shareURL: function (provider, pokemon) {
+        switch (provider) {
+          case 'facebook':
+            return 'http://www.facebook.com/sharer.php?u=' + window.location;
+          case 'twitter':
+            return [
+              'https://twitter.com/home?status=',
+              this._getLocalizedString(this.locale, 'tweet1', this.localeStrings),
+              pokemon.name.charAt(0).toUpperCase(),
+              pokemon.name.slice(1),
+              this._getLocalizedString(this.locale, 'tweet2', this.localeStrings),
+              window.location
+            ].join('');
+          case 'google':
+            return 'https://plus.google.com/share?url=' + window.location;
+          case 'tumblr':
+            return [
+              'http://www.tumblr.com/share/link?url=',
+              window.location,
+              '&amp;title=',
+              this._getLocalizedString(this.locale, 'heading', this.localeStrings)
+            ].join('');
+          default:
+            return '';
+        }
+      }
+    });
+  </script>
+</dom-module>
