@@ -1,0 +1,35 @@
+{
+  "name": "pokemon-birthday",
+  "version": "1.0.0",
+  "authors": [
+    "Alan Dávalos <alanodaval@hotmail.com>"
+  ],
+  "description": "A fun quiz-like element to find which Pokémon you are based on your birthday.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "pokemon",
+    "birthday",
+    "quiz"
+  ],
+  "main": "pokemon-birthday.html",
+  "license": "MIT",
+  "homepage": "https://github.com/alangdm/pokemon-birthday/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-ajax": "PolymerElements/iron-ajax#~1.2.0",
+    "paper-card": "PolymerElements/paper-card#^1.1.1",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.1.1"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "*"
+  }
+}

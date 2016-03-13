@@ -1,0 +1,78 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>pokemon-birthday Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../pokemon-birthday.html">
+  </head>
+  <body>
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 550px;
+      }
+    </style>
+
+    <div class="vertical-section-container centered">
+      <h3>Simple Use</h3>
+      <demo-snippet class="centered-demo">
+        <template>
+          <pokemon-birthday></pokemon-birthday>
+        </template>
+      </demo-snippet>
+
+      <h3>Applying many styles</h3>
+      <demo-snippet class="centered-demo">
+        <template>
+          <style is="custom-style">
+            .stylish {
+              --pokemon-max-height: 200px;
+              --paper-card-background-color: #B2DFDB;
+              --paper-card-header-color: color: #00796B;
+              --paper-card: {
+                color: #00796B;
+              };
+              --paper-card-actions: {
+                border-top-color: #009688;
+              };
+              --paper-spinner-color: ##00796B;
+            }
+          </style>
+          <pokemon-birthday locale="es" class="stylish"></pokemon-birthday>
+        </template>
+      </demo-snippet>
+
+      <h3>Adding a new locale</h3>
+      <demo-snippet class="centered-demo">
+        <template>
+          <pokemon-birthday id="extra"></pokemon-birthday>
+          <script>
+            window.addEventListener('WebComponentsReady', function() {
+              /*
+              When adding another locale, you must add every resource 
+              for the element to work properly.
+              */
+              extra.push('localeList', 'ja');
+              extra.localeStrings.ja = {
+                heading: '君はどのポケモン？',
+                birthdayLabel: '君の誕生日',
+                result: '君は',
+                tweet1: '私は「',
+                tweet2: '」でした。 君はどのポケモンかを確かめてみて！',
+                languageLabel: '言語',
+                language: '日本語',
+                datePlaceholder: '例：2000-01-31'
+              };
+              extra.locale = 'ja';
+            });
+          </script>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>
