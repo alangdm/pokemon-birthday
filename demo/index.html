@@ -4,54 +4,23 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <title>pokemon-birthday Demo</title>
+    <title>Pokémon Birthday</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../pokemon-birthday.html">
   </head>
   <body>
-
     <style is="custom-style">
-      .container {
-        display: flex;
-        justify-content: space-around;
-        flex-flow: row wrap;
+      body {
+        background: #fafafa;
       }
-
-      #extra {
-        --pokemon-max-height: 200px;
-        --paper-card-background-color: #B2DFDB;
-        --paper-card: {
-          color: #00796B;
-        };
-        --paper-card-actions: {
-          border-top-color: #009688;
-        };
-        --paper-spinner-color: ##00796B;
+      .vertical-section-container {
+        display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
       }
     </style>
-
-    <div class="container">
+    <div class="vertical-section-container">
       <pokemon-birthday></pokemon-birthday>
-      <pokemon-birthday locale="es"></pokemon-birthday>
-      <pokemon-birthday id="extra"></pokemon-birthday>
     </div>
-    <script>
-    window.addEventListener('WebComponentsReady', function() {
-      //Adding another locale, you must add every resource for the element to work properly
-      extra.push('localeList', 'ja');
-      extra.localeStrings.ja = {
-        heading: '君はどのポケモン？',
-        birthdayLabel: '君の誕生日',
-        result: '君は',
-        tweet1: '私は「',
-        tweet2: '」でした。 君はどのポケモンかを確かめてみて！',
-        languageLabel: '言語',
-        language: '日本語',
-        datePlaceholder: '例：2000-01-31'
-      };
-      extra.locale = 'ja';
-    });
-    </script>
-
   </body>
 </html>
