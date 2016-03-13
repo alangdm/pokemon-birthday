@@ -2,6 +2,7 @@
 
 <link href="../iron-ajax/iron-ajax.html" rel="import">
 <link href="../paper-card/paper-card.html" rel="import">
+<link href="../paper-spinner/paper-spinner-lite.html" rel="import">
 
 <!--
 `pokemon-birthday` is a fun element which finds out which Pokémon you are based
@@ -30,6 +31,7 @@ as it seems Pokéapi doesn't support that on its current release.
 Use `--pokemon-max-height` to set the max-height of the resulting Pokémon image.
 
 Check [`paper-card`'s docs](https://elements.polymer-project.org/elements/paper-card)
+and [`paper-spinner-lite`'s docs](https://elements.polymer-project.org/elements/paper-spinner?active=paper-spinner-lite)
 for more styling options.
 
 @element pokemon-birthday
@@ -82,7 +84,9 @@ for more styling options.
           <span id="pokemonName">[[_pokemon.name]]</span>!
         </h3>
 
-        <img class="pokemon" src="[[_imageURL(_pokemon)]]">
+        <img class="pokemon" src="[[_imageURL(_pokemon)]]" hidden$="[[!_resultExists]]">
+
+        <paper-spinner-lite id="spinner"></paper-spinner-lite>
       </div>
 
       <div class="card-actions">
@@ -119,7 +123,8 @@ for more styling options.
       auto
       url="[[_pokeapiURL(_number)]]"
       handle-as="json"
-      last-response="{{_pokemon}}"></iron-ajax>
+      last-response="{{_pokemon}}"
+      on-request="_requestSent"></iron-ajax>
   </template>
   <script>
     Polymer({
@@ -193,6 +198,10 @@ for more styling options.
           }
         }
       },
+      _requestSent: function () {
+        this._resultExists = false;
+        this.$.spinner.active = true;
+      },
       _getLocalizedString: function (locale, key, strings) {
         return strings[locale][key];
       },
@@ -210,6 +219,7 @@ for more styling options.
       },
       _imageURL: function (pokemon) {
         this._resultExists = true;
+        this.$.spinner.active = false;
         return 'http://img.pokemondb.net/artwork/' + pokemon.name + '.jpg';
       },
       _shareURL: function (provider, pokemon) {
