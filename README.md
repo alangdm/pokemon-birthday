@@ -3,6 +3,8 @@
 > `pokemon-birthday` is a fun element which finds out which Pokémon you are based
 on you birthday.
 
+## [Docs/Demo](http://alangdm.github.io/pokemon-birthday/)
+
 ## Install
 
 Install the component using [Bower](http://bower.io/):
