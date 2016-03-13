@@ -3,6 +3,38 @@
 <link href="../iron-ajax/iron-ajax.html" rel="import">
 <link href="../paper-card/paper-card.html" rel="import">
 
+<!--
+`pokemon-birthday` is a fun element which finds out which Pokémon you are based
+on you birthday.
+
+The algorithm guarantees that for every 2 years there will be at least 1 date
+which corresponds to every Pokémon species (with a few of them having 2).
+
+This element uses [Pokéapi](http://pokeapi.co/) and
+[Pokémon Database](http://pokemondb.net/) as resources.
+
+### Example
+    <pokemon-birthday locale="en"></pokemon-birthday>
+
+### Other Locales
+You can add other locales like this if you want to:
+
+    //if you want to add French
+    pkmnbd.push('localeList', 'fr');
+    pkmnbd.localeStrings.fr = {/*the translated strings*/};
+
+The only drawback is that you won't be able to view the localized Pokémon names
+as it seems Pokéapi doesn't support that on its current release.
+
+### Styling
+Use `--pokemon-max-height` to set the max-height of the resulting Pokémon image.
+
+Check [`paper-card`'s docs](https://elements.polymer-project.org/elements/paper-card)
+for more styling options.
+
+@element pokemon-birthday
+@demo demo/index.html
+-->
 <dom-module id="pokemon-birthday">
   <template>
     <style>
@@ -11,7 +43,7 @@
       }
       img.pokemon {
         max-width: 100%;
-        max-height: 300px;
+        max-height: var(--pokemon-max-height, 300px);
       }
       img.social {
         width: 35px;
@@ -39,17 +71,18 @@
     <paper-card heading="[[_getLocalizedString(locale, 'heading', localeStrings)]]">
       <div class="card-content">
         <div>
-          <label>[[_getLocalizedString(locale, 'label', localeStrings)]]:</label>
+          <label>[[_getLocalizedString(locale, 'birthdayLabel', localeStrings)]]:</label>
           <input id="birthday" type="date" value="{{birthday::change}}"
             placeholder$="[[_getLocalizedString(locale, 'datePlaceholder', localeStrings)]]">
         </div>
 
         <h3 hidden$="[[!_resultExists]]">
-          [[_getLocalizedString(locale, 'result', localeStrings)]] #[[number]]
-          <span id="pokemonName">[[pokemon.name]]</span>
+          [[_getLocalizedString(locale, 'result', localeStrings)]]
+          #[[_number]]
+          <span id="pokemonName">[[_pokemon.name]]</span>!
         </h3>
 
-        <img class="pokemon" src="[[_imageURL(pokemon)]]">
+        <img class="pokemon" src="[[_imageURL(_pokemon)]]">
       </div>
 
       <div class="card-actions">
@@ -63,19 +96,19 @@
         </div>
 
         <div class="actionGroup" hidden$="[[!_resultExists]]">
-          <a href="[[_shareURL('facebook', pokemon)]]" target="_blank">
+          <a href="[[_shareURL('facebook', _pokemon)]]" target="_blank">
             <img class="social" src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
           </a>
 
-          <a href="[[_shareURL('twitter', pokemon)]]" target="_blank">
+          <a href="[[_shareURL('twitter', _pokemon)]]" target="_blank">
             <img class="social" src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
           </a>
 
-          <a href="[[_shareURL('google', pokemon)]]" target="_blank">
+          <a href="[[_shareURL('google', _pokemon)]]" target="_blank">
             <img class="social" src="https://simplesharebuttons.com/images/somacro/google.png" alt="Google" />
           </a>
 
-          <a href="[[_shareURL('tumblr', pokemon)]]" target="_blank">
+          <a href="[[_shareURL('tumblr', _pokemon)]]" target="_blank">
             <img class="social" src="https://simplesharebuttons.com/images/somacro/tumblr.png" alt="Tumblr" />
           </a>
         </div>
@@ -84,24 +117,31 @@
 
     <iron-ajax
       auto
-      url="[[_pokeapiURL(number)]]"
+      url="[[_pokeapiURL(_number)]]"
       handle-as="json"
-      last-response="{{pokemon}}"></iron-ajax>
+      last-response="{{_pokemon}}"></iron-ajax>
   </template>
   <script>
     Polymer({
       is: 'pokemon-birthday',
       properties: {
+        /**
+        * A ISO 8601 formatted date string which represents the user's birthday
+        */
         birthday: {
           type: String
         },
-        pokemon: {
+        _pokemon: {
           type: Object
         },
-        number: {
+        _number: {
           type: Number,
           computed: '_calculateNumber(birthday)'
         },
+        /**
+        * A string to indicate which locale the element should use for its
+        * strings
+        */
         locale: {
           type: String,
           value: 'en'
@@ -110,14 +150,20 @@
           type: Boolean,
           value: false
         },
+        /**
+        * An object containing the string resources for the different locales.
+        * Each locale must have strings resources for the following keys:
+        * 'birthdayLabel', 'datePlaceholder', 'heading', 'Language', 'languageLabel',
+        * 'result', 'tweet1', 'tweet2'
+        */
         localeStrings: {
           type: Object,
           value: function () {
             return {
               es: {
                 heading: '¿Qué Pokémon Eres?',
-                label: 'Tu Cumpleaños',
-                result: 'Eres',
+                birthdayLabel: 'Tu Cumpleaños',
+                result: '¡Eres',
                 tweet1: 'Yo soy ',
                 tweet2: '. ¡Descubre qué Pokémon eres tu! ',
                 languageLabel: 'Idioma',
@@ -126,7 +172,7 @@
               },
               en: {
                 heading: 'Which Pokémon Are You?',
-                label: 'Your Birthday',
+                birthdayLabel: 'Your Birthday',
                 result: 'You\'re',
                 tweet1: 'I was ',
                 tweet2: '. Find out which Pokémon you are! ',
@@ -137,6 +183,9 @@
             };
           }
         },
+        /**
+        * An array of strings containing the locale keys for the available locales.
+        */
         localeList: {
           type: Array,
           value: function () {
